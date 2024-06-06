@@ -7,11 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import com.example.redis.dto.UserDTO;
 
+// dummy class
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-	
-	// dummy class
 	@Override
 	public UserDTO findById(String userId) {
 		return createUser(userId);
