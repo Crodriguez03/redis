@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
+import java.util.random.RandomGenerator;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.RedisOperations;
@@ -22,7 +22,7 @@ public class CacheUserServiceImpl implements CacheUserService {
 
 	private RedisTemplate<String, UserDTO> redisTemplate;
 	
-	Random ran = new Random();
+	private final RandomGenerator random = RandomGenerator.getDefault();
 	
 	public CacheUserServiceImpl(RedisTemplate<String, UserDTO> redisTemplate) {
 		this.redisTemplate = redisTemplate;
@@ -44,7 +44,7 @@ public class CacheUserServiceImpl implements CacheUserService {
 	public void updateUserFromCache(UserDTO user) {
 		// Seteamos una duración de la cache aleatoria para pruebas
 		redisTemplate.opsForValue().set(PREFIX_USER + user.getId(), user, 
-				Duration.of(ran.nextInt(5, 50), ChronoUnit.SECONDS));
+				Duration.of(random.nextInt(5, 50), ChronoUnit.SECONDS));
 	}
 
 	@Async
@@ -56,7 +56,7 @@ public class CacheUserServiceImpl implements CacheUserService {
 				operations.multi();
 				// Seteamos una duración de la cache aleatoria para pruebas
 				users.forEach(user -> operations.opsForValue().set(PREFIX_USER + user.getId(), user, 
-						Duration.of(ran.nextInt(5, 50), ChronoUnit.SECONDS)));
+						Duration.of(random.nextInt(5, 50), ChronoUnit.SECONDS)));
 				return operations.exec();
 			}
 		});
